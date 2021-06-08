@@ -1,4 +1,4 @@
-import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, SET_USER, AUTH_ERROR, LOGOUT_USER } from '../Helpers/Constants'
+import { REGISTER_SUCCESS, REGISTER_FAIL, LOGIN_SUCCESS, LOGIN_FAIL, SET_USER, AUTH_ERROR, VERIFIED, LOGOUT_USER } from '../Helpers/Constants'
 import { setAlert } from './alertAction'
 import { Axios, setAuthToken } from '../Helpers/Axios'
 import Cookies from 'universal-cookie';
@@ -9,12 +9,13 @@ const config = {
           "Content-Type": "application/json"
      }
 }
-export const registerUser = ({ name, email, password, confirmPassword }) => async (dispatch) => {
+export const registerUser = ({ fullName, email, password, confirmPassword }) => async (dispatch) => {
 
-     const body = JSON.stringify({ name, email, password, confirmPassword })
+     const body = { fullName, email, password, confirmPassword };
 
      try {
-          const res = await Axios.post('/users/register', body, config);
+          const res = await Axios.post('/auth/register', body, config);
+          dispatch(setAlert('Registration success,please verify your email to login', 'success'));
           dispatch({
                type: REGISTER_SUCCESS,
                payload: res.data
@@ -43,7 +44,7 @@ export const registerUser = ({ name, email, password, confirmPassword }) => asyn
 
 export const loginUser = (body) => (dispatch) => {
 
-     Axios.post('/users/login', body, config)
+     Axios.post('/auth/login', body, config)
           .then((res) => {
 
                const token = `Bearer ${res.data.token}`;
@@ -58,10 +59,11 @@ export const loginUser = (body) => (dispatch) => {
 
           })
           .catch((err) => {
-               const errors = err.response.data.errors;
-               if (errors) {
-                    errors.forEach(err => dispatch(setAlert(err.msg, 'danger')));
-               }
+               const errors = err.response.data
+               console.log(errors.msg)
+               dispatch(setAlert(errors.msg, 'danger'))
+
+
                dispatch({
                     type: LOGIN_FAIL,
 
@@ -72,9 +74,9 @@ export const loginUser = (body) => (dispatch) => {
 }
 
 export const getUserData = () => (dispatch) => {
-     Axios.get('/auth')
+     Axios.get('/auth/me')
           .then(res => {
-               console.log('fuck')
+
                cookies.set('user', res.data.data)
                dispatch({
                     type: SET_USER,
@@ -102,6 +104,23 @@ export const logoutUser = () => (dispatch) => {
 
      });
 
+
+
+
+};
+
+export const verifyEmail = (token) => async (dispatch) => {
+     const res = Axios.post('/auth/user/verify', { activation_token: token }, config).then(res => {
+          console.log(res)
+          dispatch({
+               type: VERIFIED,
+
+          });
+
+
+     }).catch(err => {
+          console.log(err)
+     })
 
 
 

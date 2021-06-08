@@ -36,12 +36,12 @@ app.use(mongoSanitize());
 app.use(xss());
 
 //rate limiting
-const limiter = rateLimit({
-     windowMs: 10 * 60 * 1000,
-     max: 10
-});
+// const limiter = rateLimit({
+//      windowMs: 10 * 60 * 1000,
+//      max: 10
+// });
 
-app.use(limiter);
+// app.use(limiter);
 
 //prevent http parameter pollution
 app.use(hpp());

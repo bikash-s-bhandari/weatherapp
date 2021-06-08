@@ -18,9 +18,13 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
           return res.status(400).json({ errors: errors.array() })
      }
      const { fullName, email, password } = req.body
+
+
      const user = await User.findOne({ email });
 
      if (user) return next(new ErrorResponse(`This email already exists.`, 400));
+
+
      const newUser = await User.create({
           fullName,
           email,
@@ -46,6 +50,8 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
 exports.activateEmail = asyncHandler(async (req, res) => {
 
      const { activation_token } = req.body
+
+
      const userData = jwt.verify(activation_token, process.env.ACTIVATION_TOKEN_SECRET);
      if (userData) {
           const { email } = userData;
@@ -71,22 +77,14 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
           return res.status(400).json({ errors: errors.array() })
      }
      //login user either username or email
-     const { password, username } = req.body;
-     if (/\@/.test(username)) {
-          data = {
-               email: username,
-          };
-     }
-     else {
-          data = {
-               username: username,
+     const { password, email } = req.body;
 
-          };
 
-     }
 
      //check user exist or not by email
-     const user = await User.findOne(data).select('+password');
+     const user = await User.findOne({ email: email }).select('+password');
+
+
 
      if (!user) {
           return next(new ErrorResponse(`The user doesn't exist with provided email`, 400));

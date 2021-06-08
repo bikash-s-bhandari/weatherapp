@@ -11,6 +11,8 @@ import Header from './Components/Layouts/Header'
 import Footer from './Components/Layouts/Footer'
 import Home from './Pages/Home';
 import About from './Pages/About';
+import Alert from './Components/Layouts/Alert'
+import Verify from './Pages/Auth/Verify'
 //redux stuff
 import { Provider } from 'react-redux';
 import store from './store';
@@ -38,6 +40,7 @@ function App() {
         <Router>
           <Header />
           <div className="container mt-5">
+            <Alert />
             <Switch>
 
 
@@ -45,6 +48,7 @@ function App() {
               <Route exact path="/about" component={About} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/register" component={Register} />
+              <Route exact path="/user/activate/:token" component={Verify} />
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
 
 
