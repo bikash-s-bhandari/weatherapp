@@ -23,6 +23,13 @@ exports.getWeatherData = asyncHandler(async (req, res, next) => {
                if (!weather) {
                     weather = await Weather.create(data)
 
+               } else {
+
+                    weather = await Weather.findOneAndUpdate({ id: data.id }, data, {
+                         new: true,
+
+                    });
+
                }
                return res.json(
                     {
@@ -32,6 +39,8 @@ exports.getWeatherData = asyncHandler(async (req, res, next) => {
 
           })
           .catch(async (err) => {
+
+               //check error code if api sever is down here....
                if (err.code === 'ENOTFOUND' && err.type === 'system') {
                     let weather = await Weather.findOne({ name: new RegExp('^' + location + '$', "i") });
                     if (!weather) {
