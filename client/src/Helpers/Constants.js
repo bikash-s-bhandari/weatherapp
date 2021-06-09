@@ -8,6 +8,8 @@ export const SET_USER = 'SET_USER'
 export const AUTH_ERROR = 'AUTH_ERROR'
 export const LOGOUT_USER = 'LOGOUT_USER'
 
-export const GET_WEATHER = 'GET_WEATHE';
+export const SET_WEATHER = 'SET_WEATHER';
 
 export const VERIFIED = 'VERIFIED';
+
+
